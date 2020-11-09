@@ -1,18 +1,18 @@
-package com.onysakura.utilities.file;
+package com.onysakura.utilities.file.text;
 
 import java.io.*;
 
-public class SqlCompact {
+public class SqlRetrench {
 
     /**
      * 每个表留下的数据行数
      */
     private static final int COUNT = 10;
+    private static final String SQL_PATH = "/Files/Workspaces/Mine/tzkbapp.sql";
 
     public static void main(String[] args) throws Exception {
-        String sqlPath = "/Files/Workspaces/Mine/tzkbapp.sql";
-        File file = new File(sqlPath);
-        File newFile = new File(sqlPath.replace(".sql", ".new.sql"));
+        File file = new File(SQL_PATH);
+        File newFile = new File(SQL_PATH.replace(".sql", ".new.sql"));
         BufferedReader reader = new BufferedReader(new FileReader(file));
         BufferedWriter writer = new BufferedWriter(new FileWriter(newFile));
         String s = reader.readLine();
