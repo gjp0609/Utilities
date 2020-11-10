@@ -49,4 +49,15 @@ public class Music {
     public void setType(String type) {
         this.type = FileType.getType(type);
     }
+
+    @Override
+    public String toString() {
+        return "Music{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", size='" + size + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

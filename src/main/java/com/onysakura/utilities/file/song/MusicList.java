@@ -2,8 +2,8 @@ package com.onysakura.utilities.file.song;
 
 import com.onysakura.utilities.db.sqlite.TableName;
 
-@TableName("Artist")
-public class Artist {
+@TableName("MUSIC_LIST")
+public class MusicList {
     private String id;
     private String name;
 
