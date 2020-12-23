@@ -1,9 +1,6 @@
 package com.onysakura.utilities.web.api;
 
-import com.onysakura.utilities.utils.httpclient.Constants;
-import com.onysakura.utilities.utils.httpclient.GetParam;
-import com.onysakura.utilities.utils.httpclient.HttpClientUtils;
-import com.onysakura.utilities.utils.httpclient.PostParam;
+import com.onysakura.utilities.utils.httpclient.*;
 
 public class Main {
 
@@ -13,6 +10,7 @@ public class Main {
 //        get();
 //        post();
 //        postJson();
+//        postXml();
 //        postForm();
         postFile();
     }
@@ -37,6 +35,16 @@ public class Main {
                         .addBody("k1", "v1")
                         .addBody("k2", "v2")
         );
+    }
+
+    public static void postXml() throws Exception {
+        ResponseResult responseResult = HttpClientUtils.post(URL + "post",
+                new PostParam()
+                        .setContentType(Constants.ContentType.APPLICATION_XML)
+                        .addBody("k1", "v1")
+                        .addBody("k2", "v2")
+        );
+        System.out.println(responseResult.getResult());
     }
 
     public static void postForm() throws Exception {
