@@ -1,0 +1,78 @@
+package com.onysakura.utilities.web.api.epay;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.onysakura.utilities.utils.FileUtils;
+import com.onysakura.utilities.utils.httpclient.Constants;
+import com.onysakura.utilities.utils.httpclient.HttpClientUtils;
+import com.onysakura.utilities.utils.httpclient.PostParam;
+import com.onysakura.utilities.utils.httpclient.ResponseResult;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class ManagerFunctions {
+
+    private static final String URL = "https://xxx.com/xxxxx";
+
+    public static String validateCodeToken() throws Exception {
+        String s = HttpClientUtils.get(URL + "/validateCodeToken").getResult();
+        JSONObject jsonObject = JSON.parseObject(s);
+        if ("10000".equals(jsonObject.getString("code"))) {
+            return jsonObject.getJSONObject("data").getString("validateCodeToken");
+        } else {
+            throw new RuntimeException("validateCodeToken error");
+        }
+    }
+
+    public static String validateCode(String token) throws Exception {
+        String s = HttpClientUtils.get(URL + "/validateCode/" + token).getResult();
+        JSONObject jsonObject = JSON.parseObject(s);
+        if ("10000".equals(jsonObject.getString("code"))) {
+            return jsonObject.getJSONObject("data").getString("validateCode");
+        } else {
+            throw new RuntimeException("validateCodeToken error");
+        }
+    }
+
+    public static String login(String token, String code, String username, String password) throws Exception {
+        ResponseResult result = HttpClientUtils.post(URL + "/login",
+                new PostParam()
+                        .setContentType(Constants.ContentType.APPLICATION_JSON)
+                        .addBody("account", username)
+                        .addBody("password", password)
+                        .addBody("validateCode", code)
+                        .addBody("validateCodeToken", token)
+        );
+        JSONObject jsonObject = JSON.parseObject(result.getResult());
+        if (result.isSuccess() && "10000".equals(jsonObject.getString("code"))) {
+            List<String> authorization = result.getHeaderFields().get("Authorization");
+            return authorization.get(0);
+        } else {
+            throw new RuntimeException("login error");
+        }
+    }
+
+    /**
+     * 人眼识别
+     */
+    public static String getCode(String codeImage) throws Exception {
+        String codePath = "/Files/Temp/code.jpg";
+        FileUtils.base64ImageToFile(codeImage, codePath);
+        System.out.print("Input validate code: ");
+        Scanner scanner = new Scanner(System.in);
+        return scanner.nextLine();
+    }
+
+    public static void uploadImage(String authorization, List<String> uploadFilePaths) throws Exception {
+        for (String path : uploadFilePaths) {
+            HttpClientUtils.post(URL + "/basic/uploadFileImager",
+                    new PostParam()
+                            .setContentType(Constants.ContentType.MULTIPART_FORM_DATA)
+                            .addRequestProperty("Authorization", authorization)
+                            .addUploadFilePath(path)
+                            .addUploadFileName("photoFile")
+            );
+        }
+    }
+}
