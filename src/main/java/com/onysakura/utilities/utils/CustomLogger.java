@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.logging.*;
+import java.util.regex.Matcher;
 
 public class CustomLogger {
 
@@ -83,9 +84,7 @@ public class CustomLogger {
         }
 
         public void debug(String msg, Object... args) {
-            for (Object arg : args) {
-                msg = msg.replaceFirst("\\{}", String.valueOf(arg));
-            }
+            msg = msg(msg, args);
             logger.fine(msg);
         }
 
@@ -94,9 +93,7 @@ public class CustomLogger {
         }
 
         public void info(String msg, Object... args) {
-            for (Object arg : args) {
-                msg = msg.replaceFirst("\\{}", String.valueOf(arg));
-            }
+            msg = msg(msg, args);
             logger.info(String.valueOf(msg));
         }
 
@@ -105,9 +102,7 @@ public class CustomLogger {
         }
 
         public void warn(String msg, Object... args) {
-            for (Object arg : args) {
-                msg = msg.replaceFirst("\\{}", String.valueOf(arg));
-            }
+            msg = msg(msg, args);
             logger.warning(String.valueOf(msg));
         }
 
@@ -119,9 +114,7 @@ public class CustomLogger {
         }
 
         public void warn(Throwable t, String msg, Object... args) {
-            for (Object arg : args) {
-                msg = msg.replaceFirst("\\{}", String.valueOf(arg));
-            }
+            msg = msg(msg, args);
             StringWriter stringWriter = new StringWriter();
             PrintWriter writer = new PrintWriter(stringWriter);
             t.printStackTrace(writer);
@@ -133,9 +126,7 @@ public class CustomLogger {
         }
 
         public void error(String msg, Object... args) {
-            for (Object arg : args) {
-                msg = msg.replaceFirst("\\{}", String.valueOf(arg));
-            }
+            msg = msg(msg, args);
             logger.severe(String.valueOf(msg));
         }
 
@@ -147,13 +138,19 @@ public class CustomLogger {
         }
 
         public void error(Throwable t, String msg, Object... args) {
-            for (Object arg : args) {
-                msg = msg.replaceFirst("\\{}", String.valueOf(arg));
-            }
+            msg = msg(msg, args);
             StringWriter stringWriter = new StringWriter();
             PrintWriter writer = new PrintWriter(stringWriter);
             t.printStackTrace(writer);
             logger.severe(msg + "\n" + stringWriter.toString());
+        }
+
+        public String msg(String msg, Object[] args) {
+            for (Object arg : args) {
+                String str = Matcher.quoteReplacement(String.valueOf(arg));
+                msg = msg.replaceFirst("\\{}", str);
+            }
+            return msg;
         }
     }
 
