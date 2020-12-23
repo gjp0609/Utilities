@@ -1,10 +1,10 @@
 package com.onysakura.utilities.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,5 +44,24 @@ public class FileUtils {
             LOG.warn("Get File MD5 Fail, " + e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * @param imgStr base64 image content
+     * @param path   file path and name
+     */
+    public static void base64ImageToFile(String imgStr, String path) throws IOException {
+        if (imgStr != null) {
+            byte[] b = Base64.getDecoder().decode(imgStr);
+            for (int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {// 调整异常数据
+                    b[i] += 256;
+                }
+            }
+            OutputStream out = new FileOutputStream(path);
+            out.write(b);
+            out.flush();
+            out.close();
+        }
     }
 }

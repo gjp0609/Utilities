@@ -1,7 +1,21 @@
 package com.onysakura.utilities.utils;
 
+import org.w3c.dom.Document;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class StringUtils {
 
@@ -81,6 +95,66 @@ public class StringUtils {
         return result.toString();
     }
 
+
+    /**
+     * 将Map转换为XML格式的字符串
+     *
+     * @param data Map类型数据
+     * @return XML格式的字符串
+     */
+    public static String mapToXml(Map<String, String> data) throws Exception {
+        org.w3c.dom.Document document = newDocument();
+        org.w3c.dom.Element root = document.createElement("xml");
+        document.appendChild(root);
+        for (String key : data.keySet()) {
+            String value = data.get(key);
+            if (value == null) {
+                value = "";
+            }
+            value = value.trim();
+            org.w3c.dom.Element filed = document.createElement(key);
+            filed.appendChild(document.createTextNode(value));
+            root.appendChild(filed);
+        }
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        DOMSource source = new DOMSource(document);
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
+        transformer.transform(source, result);
+        String output = writer.getBuffer().toString(); // .replaceAll("\n|\r", "");
+        try {
+            writer.close();
+        } catch (Exception e) {
+            LOG.error(e, "将Map转换为XML格式的字符串异常");
+        }
+        return output;
+    }
+
+    /**
+     * 生成DOM
+     */
+    private static Document newDocument() throws ParserConfigurationException {
+        return newDocumentBuilder().newDocument();
+    }
+
+    /**
+     * DOM文档生成器
+     */
+    public static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        documentBuilderFactory.setXIncludeAware(false);
+        documentBuilderFactory.setExpandEntityReferences(false);
+        return documentBuilderFactory.newDocumentBuilder();
+    }
+
     /**
      * 计算两个字符串的相似度
      */
@@ -130,5 +204,18 @@ public class StringUtils {
             }
         }
         return min;
+    }
+
+    private static final String NUMBER = "0123456789";
+    private static final String ABC = "abcdefghijklmnopqrstuvwxyz";
+
+    public static synchronized String randomStr(int length) {
+        Random random = new Random();
+        String source = NUMBER + ABC + ABC.toUpperCase();
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            s.append(source.charAt(random.nextInt(source.length())));
+        }
+        return s.toString();
     }
 }
