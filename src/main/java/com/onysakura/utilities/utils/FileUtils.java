@@ -1,5 +1,6 @@
 package com.onysakura.utilities.utils;
 
+import java.awt.*;
 import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -62,6 +63,22 @@ public class FileUtils {
             out.write(b);
             out.flush();
             out.close();
+        }
+    }
+
+    public static void openFile(String path) {
+        try {
+            File file = new File(path);
+            if (!Desktop.isDesktopSupported()) {
+                System.out.println("not supported");
+            } else {
+                Desktop desktop = Desktop.getDesktop();
+                if (file.exists()) {
+                    desktop.open(file);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.onysakura.utilities.file;
+package com.onysakura.utilities.utils;
 
 import java.util.HashMap;
 
