@@ -3,6 +3,7 @@ package com.onysakura.utilities.web.api.epay;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.onysakura.utilities.file.image.AsciiImage;
+import com.onysakura.utilities.file.image.AwtShowImage;
 import com.onysakura.utilities.utils.FileUtils;
 import com.onysakura.utilities.utils.httpclient.Constants;
 import com.onysakura.utilities.utils.httpclient.HttpClientUtils;
@@ -60,8 +61,9 @@ public class ManagerFunctions {
     public static String getCode(String codeImage) throws Exception {
         String codePath = "/Files/Temp/code.jpg";
         FileUtils.base64ImageToFile(codeImage, codePath);
-        AsciiImage.printImage(codePath, 30, 0, false);
+        // AsciiImage.printImage(codePath, 30, 0, false);
         // FileUtils.openFile(codePath);
+        AwtShowImage.show(codePath);
         System.out.print("Input validate code: ");
         Scanner scanner = new Scanner(System.in);
         return scanner.nextLine();
