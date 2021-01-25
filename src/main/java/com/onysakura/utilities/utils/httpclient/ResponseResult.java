@@ -38,4 +38,14 @@ public class ResponseResult {
     public boolean isSuccess() {
         return responseCode == 200;
     }
+
+
+    @Override
+    public String toString() {
+        return "ResponseResult{" +
+                "responseCode=" + responseCode +
+                ", result='" + result + '\'' +
+                ", headerFields=" + headerFields +
+                '}';
+    }
 }

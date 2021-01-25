@@ -3,6 +3,7 @@ package com.onysakura.utilities.utils.httpclient;
 import com.alibaba.fastjson.JSON;
 import com.onysakura.utilities.utils.CustomLogger;
 import com.onysakura.utilities.utils.StringUtils;
+import com.onysakura.utilities.utils.XmlUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -20,11 +21,11 @@ public class HttpClientUtils {
 
     private static final CustomLogger.Log LOG = CustomLogger.getLogger(HttpClientUtils.class);
 
-    public static ResponseResult get(String httpUrl) throws IOException {
+    public static ResponseResult get(String httpUrl) throws Exception {
         return get(httpUrl, null);
     }
 
-    public static ResponseResult get(String httpUrl, GetParam getParam) throws IOException {
+    public static ResponseResult get(String httpUrl, GetParam getParam) throws Exception {
         LOG.info("---------- GET: {}", httpUrl);
         LOG.info("params: {}", JSON.toJSONString(getParam));
         long startTime = System.currentTimeMillis();
@@ -36,6 +37,7 @@ public class HttpClientUtils {
         }
         ResponseResult responseResult = new ResponseResult();
         httpUrl = setUrlParams(httpUrl, getParam);
+        LOG.info("---------- url: {}", httpUrl);
         HttpURLConnection connection = null;
         InputStream is = null;
         BufferedReader br = null;
@@ -46,6 +48,12 @@ public class HttpClientUtils {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(getParam.getConnectTimeout());
             connection.setReadTimeout(getParam.getReadTimeout());
+            Map<String, String> headers = getParam.getHeaders();
+            if (headers != null) {
+                for (String key : headers.keySet()) {
+                    connection.setRequestProperty(key, headers.get(key));
+                }
+            }
             connection.connect();
             responseResult.setResponseCode(connection.getResponseCode());
             Map<String, List<String>> headerFields = connection.getHeaderFields();
@@ -106,15 +114,18 @@ public class HttpClientUtils {
             // 默认值为：true，当前向远程服务读取数据时，设置为true，该参数可有可无
             connection.setDoInput(true);
             connection.setRequestProperty("Content-Type", contentType.getValueWithCharset(charset.name()));
-            Map<String, String> requestProperty = postParam.getRequestProperty();
-            if (requestProperty != null) {
-                for (String key : requestProperty.keySet()) {
-                    connection.setRequestProperty(key, requestProperty.get(key));
+            Map<String, String> headers = postParam.getHeaders();
+            if (headers != null) {
+                for (String key : headers.keySet()) {
+                    connection.setRequestProperty(key, headers.get(key));
                 }
             }
             switch (contentType) {
+                case WEBSERVICE_XML:
+                    body = postParam.getBody().get("body");
+                    break;
                 case APPLICATION_XML:
-                    body = StringUtils.mapToXml(postParam.getBody());
+                    body = XmlUtils.mapToXml(postParam.getBody());
                     break;
                 case MULTIPART_FORM_DATA:
                     String end = "\r\n";
@@ -207,13 +218,13 @@ public class HttpClientUtils {
         return responseResult;
     }
 
-    private static String setUrlParams(String httpUrl, GetParam getParam) {
+    private static String setUrlParams(String httpUrl, GetParam getParam) throws Exception {
         Map<String, String> params = getParam.getParams();
         if (params != null) {
             ArrayList<String> list = new ArrayList<>();
             for (String key : params.keySet()) {
                 String value = params.get(key);
-                list.add(key + "=" + value);
+                list.add(key + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8.name()));
             }
             if (httpUrl.contains("?")) {
                 httpUrl = httpUrl + "&";

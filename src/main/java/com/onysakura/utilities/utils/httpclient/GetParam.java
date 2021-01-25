@@ -47,4 +47,35 @@ public class GetParam extends RequestParam {
         super.setConnectTimeout(connectTimeout);
         return this;
     }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        return super.getHeaders();
+    }
+
+    @Override
+    public GetParam setHeaders(Map<String, String> headers) {
+        super.setHeaders(headers);
+        return this;
+    }
+
+    @Override
+    public GetParam addHeaders(Map<String, String> requestProperty) {
+        super.addHeaders(requestProperty);
+        return this;
+    }
+
+    @Override
+    public GetParam addHeader(String key, String value) {
+        super.addHeader(key, value);
+        return this;
+    }
+
+
+    @Override
+    public String toString() {
+        return "GetParam{" +
+                "params=" + params +
+                "} " + super.toString();
+    }
 }

@@ -2,7 +2,6 @@ package com.onysakura.utilities.web.api.epay;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.onysakura.utilities.file.image.AsciiImage;
 import com.onysakura.utilities.file.image.AwtShowImage;
 import com.onysakura.utilities.utils.FileUtils;
 import com.onysakura.utilities.utils.httpclient.Constants;
@@ -25,6 +24,16 @@ public class ManagerFunctions {
         } else {
             throw new RuntimeException("validateCodeToken error");
         }
+    }
+
+    public static ResponseResult getChannel(String authorization) throws Exception {
+       return HttpClientUtils.post(URL + "/channel/getPageChannelList",
+                new PostParam()
+                        .setContentType(Constants.ContentType.APPLICATION_JSON)
+                        .addHeader("Authorization", authorization)
+                        .addBody("page", "1")
+                        .addBody("rows", "50")
+        );
     }
 
     public static String validateCode(String token) throws Exception {
@@ -74,7 +83,7 @@ public class ManagerFunctions {
             HttpClientUtils.post(URL + "/basic/uploadFileImager",
                     new PostParam()
                             .setContentType(Constants.ContentType.MULTIPART_FORM_DATA)
-                            .addRequestProperty("Authorization", authorization)
+                            .addHeader("Authorization", authorization)
                             .addUploadFilePath(path)
                             .addUploadFileName("photoFile")
             );

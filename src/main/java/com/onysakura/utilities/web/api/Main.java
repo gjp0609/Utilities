@@ -24,7 +24,7 @@ public class Main {
                 new PostParam()
                         .addParam("k1", "v1")
                         .addParam("k2", "v2")
-                        .addRequestProperty("Authorization", "AuthorizationValue")
+                        .addHeader("Authorization", "AuthorizationValue")
         );
     }
 

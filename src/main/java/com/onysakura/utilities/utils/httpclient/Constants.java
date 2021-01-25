@@ -6,6 +6,7 @@ public interface Constants {
         APPLICATION_FORM_URLENCODED("application/x-www-form-urlencoded"),
         APPLICATION_JSON("application/json"),
         APPLICATION_XML("application/xml"),
+        WEBSERVICE_XML("application/xml"),
         MULTIPART_FORM_DATA("multipart/form-data")
         ;
 

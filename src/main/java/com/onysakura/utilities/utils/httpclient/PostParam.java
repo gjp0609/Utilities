@@ -17,10 +17,6 @@ public class PostParam extends GetParam {
      */
     private Charset charset;
     /**
-     * 自定义请求参数
-     */
-    private Map<String, String> requestProperty;
-    /**
      * 请求内容
      */
     private Map<String, String> body;
@@ -51,37 +47,22 @@ public class PostParam extends GetParam {
         return this;
     }
 
-    public Map<String, String> getRequestProperty() {
-        return requestProperty;
-    }
-
-    public PostParam setRequestProperty(Map<String, String> requestProperty) {
-        this.requestProperty = requestProperty;
-        return this;
-    }
-
-    public PostParam addRequestProperty(Map<String, String> requestProperty) {
-        if (this.requestProperty == null) {
-            this.requestProperty = new HashMap<>();
-        }
-        this.requestProperty.putAll(requestProperty);
-        return this;
-    }
-
-    public PostParam addRequestProperty(String key, String value) {
-        if (this.requestProperty == null) {
-            this.requestProperty = new HashMap<>();
-        }
-        this.requestProperty.put(key, value);
-        return this;
-    }
-
     public Map<String, String> getBody() {
         return body;
     }
 
     public PostParam setBody(Map<String, String> body) {
         this.body = body;
+        return this;
+    }
+
+    /**
+     * for webservice
+     */
+    public PostParam setBody(String body) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("body", body);
+        this.body = map;
         return this;
     }
 
@@ -172,6 +153,29 @@ public class PostParam extends GetParam {
     @Override
     public PostParam setConnectTimeout(int connectTimeout) {
         super.setConnectTimeout(connectTimeout);
+        return this;
+    }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        return super.getHeaders();
+    }
+
+    @Override
+    public PostParam setHeaders(Map<String, String> headers) {
+        super.setHeaders(headers);
+        return this;
+    }
+
+    @Override
+    public PostParam addHeaders(Map<String, String> requestProperty) {
+        super.addHeaders(requestProperty);
+        return this;
+    }
+
+    @Override
+    public PostParam addHeader(String key, String value) {
+        super.addHeader(key, value);
         return this;
     }
 }
